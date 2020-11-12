@@ -13,7 +13,10 @@ document.addEventListener("readystatechange", (e) => {
 
 let initApp = () => {
     //add listeners
-
+    let itemEntryForm = document.querySelector('#itemEntryForm');
+    itemEntryForm.addEventListener('submit', e => {
+        e.preventDefault();
+    })
     //procedural
 
     //load list obj
@@ -24,11 +27,9 @@ let initApp = () => {
 
 let refreshThePage = () => {
     clearListDisplay();
-    //render list
-
-    //clear item entry field
-
-    //setFocusOnItemEntry();
+    renderList();
+    clearItemEntryField();
+    setFocusOnItemEntry();
 }
 
 let clearListDisplay = () => {
@@ -44,13 +45,46 @@ let deleteContents = (parentElement) => {
     }
 };
 
-let renderList = () =>{
+let renderList = () => {
     let list = toDoList.getList();
-    list.forEach( item => {
+    list.forEach(item => {
         buildListItem(item);
     });
 };
 
-let buildListItem = (item) =>{
-    let div
+
+//DOM Function
+let buildListItem = (item) => {
+    let div = document.createElement("div");
+    div.className = "item";
+    let check = document.createElement('input');
+    check.type = checkbox;
+    check.id = item.getId();
+    check.tabIndex = 0;
+    addClickListenerToCheckbox(check);
+    let label = document.createElement('label');
+    label.tabIndex = 0;
+    label.htmlFor = item.getId();
+    label.textContent = item.getItem();
+    div.appendChild(check);
+    div.appendChild(label);
+    let container = document.querySelector('#listItems');
+    container.appendChild(div);
+};
+
+const addClickListenerToCheckbox = (checkbox) => {
+    checkbox.addEventListener("click", e => {
+        toDoList.removeItemFromList(checkbox.id);
+        setTimeout(() => {
+            refreshThePage();
+        }, 2000);
+    });
+};
+
+let clearItemEntryField = () => {
+    document.querySelector('#newItem').value = "";
+}
+
+let setFocusOnItemEntry = () => {
+    document.querySelector("#newItem").focus();
 }
